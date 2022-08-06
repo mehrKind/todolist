@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %} ToDo List {% endblock title %}
+
+{% block content %}
+<div class="list-container">
+    {% if todolist_len == 0 %}
+    <div>
+        <h3>nothing is here</h3>
+        <a href="{% url 'todoapp:create_todo_item' %}">you can add a job to do from here</a>
+    </div>
+    {% else %}
+    <div class="todo-list-container">
+        <form action="{% url 'todoapp:todo_list' %}" method="POST" id="todo-list-form">
+            <div class="todo-list">
+                <ul class="list-group">
+                    {% for todoitem in todolist %}
+                    <li class="list-group-item todo-item">
+                        <div class="todo-item-content">
+                            {% if todoitem.checked %}
+                            <input class="check-input form-check-input job-done-input" type="checkbox" name="checked"
+                                checked value="{{todoitem.id}}" aria-label="...">
+                            <div class="job-done-text job-text">
+                                <h6>{{todoitem.work}}</h6>
+                                <p>{{todoitem.date}}</p>
+                            </div>
+                            {% else %}
+                            <input class="check-input form-check-input me-1" type="checkbox" name="checked"
+                                value="{{todoitem.id}}" aria-label="...">
+
+                            <div class="job-undone-txet job-text">
+                                <h6>{{todoitem.work}}</h6>
+                                <p>{{todoitem.date}}</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="todo-item-action">
+                            <a class="btn btn-danger" href="{% url 'todoapp:delete_todo_item' todoitem.id %}"><svg
+                                    xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                    <path
+                                        d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
+                                </svg></a>
+                            <a class="btn btn-secondary" href=""><svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                    height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                                    <path
+                                        d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z" />
+                                </svg></a>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% csrf_token %}
+            <button class="btn btn-primary" id="print-paper"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-printer" viewBox="0 0 16 16">
+                <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
+                <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"/>
+              </svg></button>
+            <a href="{% url 'todoapp:create_todo_item' %}">Create new item</a>
+        </form>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    let check_input = document.getElementsByName('checked')
+    let form = document.getElementById('todo-list-form')
+    let print_icon = document.getElementById('print-paper')
+    check_input.forEach(element=>{
+        element.addEventListener('click',function(){
+            form.submit()
+        })
+    });
+    print_icon.addEventListener('click',function(){
+        print()
+    });
+</script>
+
+{% endblock content %}
